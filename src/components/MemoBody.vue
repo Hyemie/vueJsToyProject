@@ -8,6 +8,7 @@
         <input type="checkbox" class="selectAll" @change="handleAllSelected" v-model="isAllSelected" style="width:auto; margin: 5px;">
         <div style="font-size: smaller; align-self: center; margin: 5px 0 5px 0;">전체선택</div>
       </div>
+      <p v-if="diaryEntries.length == 0" style="font-size: 14px;">등록된 일기가 없습니다!</p>
       <div class="inMemoBody">
         <div
           v-for="(entry, index) in diaryEntries"
@@ -51,8 +52,7 @@ export default {
       isEditable: false,
       readEntryIndex: null,
       createdDateTime: null,
-      isAllSelected: false,
-      isSelecting: false
+      isAllSelected: false
     };
   },
 methods: {
@@ -65,9 +65,6 @@ methods: {
       this.newEntry = entry.content;
       this.readEntryIndex = index;
       this.createdDateTime = entry.createdDateTime;
-    },
-    emptyDiv(){
-      
     },
     closePopup() {
       this.isPopupVisible = false;
@@ -90,9 +87,9 @@ methods: {
         content: this.newEntry,
         createdDateTime: this.currentDateTime()
       };
-      this.diaryEntries.push(newEntry);
+      this.diaryEntries.unshift(newEntry);
       this.saveToLocalStorage();
-      alert("등록되었습니다.");
+      alert("일기가 등록되었습니다.");
       this.closePopup();
     },
     deleteEntry(index) {
@@ -113,7 +110,7 @@ methods: {
     toggleEntrySelected(entry){
       Vue.set(entry, 'isSelected', !entry.isSelected);
     },
-    deleteSelected(){
+    deleteSelected(entry){
       const selectedEntries = this.diaryEntries.filter(entry => entry.isSelected);
 
       if(selectedEntries.length > 0){
@@ -128,9 +125,7 @@ methods: {
       }else {
           alert("선택된 항목이 없습니다.");
       }
-    },
-    handleSelected(){
-
+      this.isAllSelected = false;
     },
     saveToLocalStorage() {
       localStorage.setItem("diaryEntries", JSON.stringify(this.diaryEntries));
@@ -180,9 +175,7 @@ MemoBody:focus{
 }
 .inMemoBody{
   display: flex;
-  flex-wrap: wrap-reverse;
-  justify-content: flex-start;
-  flex-direction: row-reverse;
+  flex-wrap: wrap;
 }
 .btnDiv{
   display: flex;
@@ -308,6 +301,6 @@ textarea:focus{
   outline: 0px;
 }
 .selected {
-  border: 1px solid #ff937b;
+  border: 1px solid #6e6e6e;
 }
 </style>
