@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="MemoBody shadow">
-      <div class="btnDiv" ref="testRef">
+      <div class="btnDiv">
         <button @click="showPopup" class="containerBtn">추가</button>
         <button class="containerBtn" @click="deleteSelected">삭제</button>
         
@@ -32,7 +32,7 @@
       <div style="font-size: 0.875rem; padding: 5px;">{{ createdDateTime }}</div>
       <textarea v-model="newEntry" type="text" class="readContent"></textarea>
       <button @click="updateEntry" class="popupBtn">수정</button>
-      <button @click="deleteEntry(index)" class="delete-button">삭제</button>
+      <button @click="deleteEntry" class="delete-button">삭제</button>
       <button @click="closeReadPopup" class="popupBtn">닫기</button>
     </div>
   </div>
@@ -57,7 +57,6 @@ export default {
   },
 methods: {
   showPopup() {
-      this.newEntry = "";
       this.isPopupVisible = true;
     },
     readPopup(entry, index){
@@ -92,7 +91,7 @@ methods: {
       alert("일기가 등록되었습니다.");
       this.closePopup();
     },
-    deleteEntry(index) {
+    deleteEntry() {
       if(confirm("일기를 정말 삭제하시겠습니까?")){
         if(this.readEntryIndex !== null){
           this.diaryEntries.splice(this.readEntryIndex, 1);
@@ -139,22 +138,12 @@ methods: {
         this.saveToLocalStorage();
         alert("수정되었습니다.");
         this.closeReadPopup();
-        this.loadDataFromLocalStorage();
       } else {
         console.error("인덱스를 찾을 수 없습니다.");
       }
     },
-    // 페이지 로드 시 로컬 스토리지에서 데이터 불러오기
-    loadDataFromLocalStorage() {
-      const storedData = localStorage.getItem("diaryEntries");
-      if (storedData) {
-        this.diaryEntries = JSON.parse(storedData);
-      }
-    },
   },
   created() {
-    // 페이지가 생성될 때 로컬 스토리지에서 데이터 불러오기
-    this.loadDataFromLocalStorage();
     this.diaryEntries.forEach((entry) => {
       Vue.set(entry, 'isSelected', false);
     })
